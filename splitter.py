@@ -39,7 +39,7 @@ def main():
         )
 
         # Detect receipt regions
-        rectangles, mask = detect(image)
+        rectangles, mask, stats = detect(image)
 
         # Save threshold mask
         save_debug_image(
@@ -48,9 +48,11 @@ def main():
             "03_mask.png"
         )
 
+        print(f"[INFO] Found {stats['contours_found']} contour(s)")
+        print(f"[INFO] Accepted {stats['accepted_contours']} contour(s)")
         print(f"[INFO] Found {len(rectangles)} candidate receipt(s)")
 
-        # Find gaps
+        # Find vertical gaps
         gaps = find_vertical_gaps(mask)
 
         print(f"[INFO] Found {len(gaps)} vertical gap(s)")
@@ -83,7 +85,6 @@ def main():
         )
 
         print("[INFO] Inspection report written.")
-
         print()
 
 
