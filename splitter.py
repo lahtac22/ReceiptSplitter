@@ -1,5 +1,6 @@
 from utils.files import get_input_files
 from image.image_loader import load_image
+from utils.debug import get_debug_folder
 from utils.debug import save_debug_image
 
 from detectors.colour_detector import detect
@@ -17,33 +18,50 @@ def main():
 
     for file in files:
 
-        print(f"Loading {file.name}...")
+        print(f"[INFO] Loading {file.name}")
 
+        # Create a debug folder for this file
+        debug_folder = get_debug_folder(file.stem)
+
+        # Load image
         image = load_image(file)
 
-        print(f"Image size: {image.shape}")
+        print(f"[INFO] Image size: {image.shape}")
 
-        loaded_name = file.stem + "_loaded.png"
-        mask_name = file.stem + "_mask.png"
-        detected_name = file.stem + "_detected.png"
+        # Save original image
+        save_debug_image(
+            debug_folder,
+            image,
+            "01_loaded.png"
+        )
 
-        save_debug_image(image, loaded_name)
-
+        # Detect paper
         rectangles, mask = detect(image)
 
-        save_debug_image(mask, mask_name)
+        # Save mask
+        save_debug_image(
+            debug_folder,
+            mask,
+            "03_mask.png"
+        )
 
-        print(f"Found {len(rectangles)} candidate receipt(s)")
+        print(f"[INFO] Found {len(rectangles)} candidate receipt(s)")
 
+        # Find vertical gaps
         gaps = find_vertical_gaps(mask)
 
-        print(f"Found {len(gaps)} vertical gap(s)")
+        print(f"[INFO] Found {len(gaps)} vertical gap(s)")
 
+        # Draw results
         preview = draw_rectangles(image, rectangles)
-
         preview = draw_vertical_gaps(preview, gaps)
 
-        save_debug_image(preview, detected_name)
+        # Save detection preview
+        save_debug_image(
+            debug_folder,
+            preview,
+            "05_detected.png"
+        )
 
         print()
 

@@ -1,18 +1,31 @@
-import cv2
 from pathlib import Path
+import cv2
 
 from config import DEBUG_DIR
 
 
-def save_debug_image(image, filename):
+def get_debug_folder(file_stem):
     """
-    Save an image to the debug folder.
+    Create and return a debug folder for one input file.
+
+    Example:
+        debug/receipt1/
     """
 
-    DEBUG_DIR.mkdir(exist_ok=True)
+    folder = DEBUG_DIR / file_stem
 
-    output_file = DEBUG_DIR / filename
+    folder.mkdir(parents=True, exist_ok=True)
+
+    return folder
+
+
+def save_debug_image(folder, image, filename):
+    """
+    Save an image into the file's debug folder.
+    """
+
+    output_file = folder / filename
 
     cv2.imwrite(str(output_file), image)
 
-    print(f"Saved {output_file.name}")
+    print(f"[INFO] Saved {output_file}")
