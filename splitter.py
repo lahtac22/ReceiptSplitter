@@ -9,8 +9,11 @@ from utils.report import write_report
 from detectors.colour_detector import detect
 from detectors.split_detector import find_vertical_gaps
 
-from utils.drawing import draw_rectangles
-from utils.drawing import draw_vertical_gaps
+from utils.drawing import (
+    draw_rectangles,
+    draw_vertical_gaps,
+    draw_contours
+)
 
 
 def main():
@@ -46,6 +49,18 @@ def main():
             debug_folder,
             mask,
             "03_mask.png"
+        )
+
+        # NEW: Save contour visualisation
+        contour_image = draw_contours(
+            image,
+            mask
+        )
+
+        save_debug_image(
+            debug_folder,
+            contour_image,
+            "04_contours.png"
         )
 
         print(f"[INFO] Found {stats['contours_found']} contour(s)")

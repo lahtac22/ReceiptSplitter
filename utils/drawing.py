@@ -9,6 +9,7 @@ def draw_rectangles(image, rectangles):
     preview = image.copy()
 
     for x, y, w, h in rectangles:
+
         cv2.rectangle(
             preview,
             (x, y),
@@ -22,7 +23,7 @@ def draw_rectangles(image, rectangles):
 
 def draw_vertical_gaps(image, gaps):
     """
-    Draw blue vertical lines where gaps were found.
+    Draw blue vertical lines showing detected gaps.
     """
 
     preview = image.copy()
@@ -38,5 +39,29 @@ def draw_vertical_gaps(image, gaps):
             (255, 0, 0),
             3
         )
+
+    return preview
+
+
+def draw_contours(image, mask):
+    """
+    Draw every contour found in the mask.
+    """
+
+    preview = image.copy()
+
+    contours, _ = cv2.findContours(
+        mask,
+        cv2.RETR_EXTERNAL,
+        cv2.CHAIN_APPROX_SIMPLE
+    )
+
+    cv2.drawContours(
+        preview,
+        contours,
+        -1,
+        (0, 255, 0),
+        3
+    )
 
     return preview
