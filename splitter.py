@@ -42,7 +42,7 @@ def main():
         )
 
         # Detect receipt regions
-        rectangles, mask, stats = detect(image)
+        rectangles, mask, contours, stats = detect(image)
 
         # Save threshold mask
         save_debug_image(
@@ -51,10 +51,10 @@ def main():
             "03_mask.png"
         )
 
-        # NEW: Save contour visualisation
+        # Save contour visualisation
         contour_image = draw_contours(
             image,
-            mask
+            contours
         )
 
         save_debug_image(

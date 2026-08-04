@@ -86,4 +86,4 @@ def detect(image):
         "smallest_contour": int(smallest)
     }
 
-    return rectangles, mask, stats
+    return rectangles, mask, contours, stats

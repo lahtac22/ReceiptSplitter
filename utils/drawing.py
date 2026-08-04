@@ -43,18 +43,12 @@ def draw_vertical_gaps(image, gaps):
     return preview
 
 
-def draw_contours(image, mask):
+def draw_contours(image, contours):
     """
-    Draw every contour found in the mask.
+    Draw every contour supplied by the detector.
     """
 
     preview = image.copy()
-
-    contours, _ = cv2.findContours(
-        mask,
-        cv2.RETR_EXTERNAL,
-        cv2.CHAIN_APPROX_SIMPLE
-    )
 
     cv2.drawContours(
         preview,
