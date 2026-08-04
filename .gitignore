@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environment
+.venv/
+
+# VS Code
+.vscode/
+
+# Debug output
+debug/
+
+# Program output
+output/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
