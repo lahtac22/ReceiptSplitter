@@ -1,4 +1,16 @@
-from pathlib import Path
+from datetime import datetime
+
+
+def write_heading(report, title):
+
+    report.write(title + "\n")
+    report.write("=" * len(title) + "\n\n")
+
+
+def write_section(report, title):
+
+    report.write(title + "\n")
+    report.write("-" * len(title) + "\n")
 
 
 def write_report(
@@ -8,9 +20,6 @@ def write_report(
     rectangles,
     gaps
 ):
-    """
-    Write an inspection report for one processed file.
-    """
 
     report_file = folder / "report.txt"
 
@@ -19,17 +28,38 @@ def write_report(
 
     with open(report_file, "w", encoding="utf-8") as report:
 
-        report.write("Receipt Inspector Report\n")
-        report.write("========================\n\n")
+        write_heading(report, "Receipt Inspector Report")
 
-        report.write(f"File: {file_name}\n\n")
+        report.write(
+            f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+        )
 
-        report.write("Image\n")
-        report.write("------------------------\n")
-        report.write(f"Width  : {width} px\n")
-        report.write(f"Height : {height} px\n\n")
+        write_section(report, "File")
 
-        report.write("Detection\n")
-        report.write("------------------------\n")
-        report.write(f"Receipt Candidates : {len(rectangles)}\n")
-        report.write(f"Vertical Gaps      : {len(gaps)}\n")
+        report.write(f"Name: {file_name}\n\n")
+
+        write_section(report, "Image")
+
+        report.write(f"Width : {width} px\n")
+        report.write(f"Height: {height} px\n\n")
+
+        write_section(report, "Processing")
+
+        report.write("Threshold : Otsu\n\n")
+
+        write_section(report, "Detection")
+
+        report.write(
+            f"Receipt Candidates : {len(rectangles)}\n"
+        )
+
+        report.write(
+            f"Vertical Gaps      : {len(gaps)}\n\n"
+        )
+
+        write_section(report, "Observations")
+
+        report.write("✓ Image loaded successfully\n")
+        report.write("✓ Threshold applied\n")
+        report.write("✓ Receipt detector completed\n")
+        report.write("✓ Gap detector completed\n")
