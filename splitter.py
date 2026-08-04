@@ -1,7 +1,10 @@
 from utils.files import get_input_files
 from image.image_loader import load_image
+
 from utils.debug import get_debug_folder
 from utils.debug import save_debug_image
+
+from utils.report import write_report
 
 from detectors.colour_detector import detect
 from detectors.split_detector import find_vertical_gaps
@@ -20,7 +23,7 @@ def main():
 
         print(f"[INFO] Loading {file.name}")
 
-        # Create a debug folder for this file
+        # Create inspection folder
         debug_folder = get_debug_folder(file.stem)
 
         # Load image
@@ -35,10 +38,10 @@ def main():
             "01_loaded.png"
         )
 
-        # Detect paper
+        # Detect receipt regions
         rectangles, mask = detect(image)
 
-        # Save mask
+        # Save threshold mask
         save_debug_image(
             debug_folder,
             mask,
@@ -47,14 +50,21 @@ def main():
 
         print(f"[INFO] Found {len(rectangles)} candidate receipt(s)")
 
-        # Find vertical gaps
+        # Find gaps
         gaps = find_vertical_gaps(mask)
 
         print(f"[INFO] Found {len(gaps)} vertical gap(s)")
 
-        # Draw results
-        preview = draw_rectangles(image, rectangles)
-        preview = draw_vertical_gaps(preview, gaps)
+        # Draw detections
+        preview = draw_rectangles(
+            image,
+            rectangles
+        )
+
+        preview = draw_vertical_gaps(
+            preview,
+            gaps
+        )
 
         # Save detection preview
         save_debug_image(
@@ -62,6 +72,17 @@ def main():
             preview,
             "05_detected.png"
         )
+
+        # Write inspection report
+        write_report(
+            debug_folder,
+            file.name,
+            image,
+            rectangles,
+            gaps
+        )
+
+        print("[INFO] Inspection report written.")
 
         print()
 
