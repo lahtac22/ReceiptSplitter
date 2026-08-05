@@ -1,21 +1,33 @@
 import cv2
 
 
+MIN_CONTOUR_AREA = 10000
+
+
 def detect(image):
     """
     Detect likely receipt regions.
 
-    Returns
-    -------
-    rectangles
-    mask
-    stats
+    Returns:
+        rectangles
+        mask
+        contours
+        stats
     """
 
+    # ----------------------------
     # Convert to grayscale
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    # ----------------------------
 
-    # Automatically determine threshold
+    gray = cv2.cvtColor(
+        image,
+        cv2.COLOR_BGR2GRAY
+    )
+
+    # ----------------------------
+    # Otsu threshold
+    # ----------------------------
+
     _, mask = cv2.threshold(
         gray,
         0,
@@ -23,7 +35,10 @@ def detect(image):
         cv2.THRESH_BINARY + cv2.THRESH_OTSU
     )
 
-    # Fill small holes
+    # ----------------------------
+    # Close small holes
+    # ----------------------------
+
     kernel = cv2.getStructuringElement(
         cv2.MORPH_RECT,
         (15, 15)
@@ -35,7 +50,10 @@ def detect(image):
         kernel
     )
 
+    # ----------------------------
     # Find contours
+    # ----------------------------
+
     contours, _ = cv2.findContours(
         mask,
         cv2.RETR_EXTERNAL,
@@ -47,6 +65,7 @@ def detect(image):
     contour_areas = []
 
     accepted = 0
+    rejected = 0
 
     for contour in contours:
 
@@ -54,24 +73,34 @@ def detect(image):
 
         contour_areas.append(area)
 
-        if area < 10000:
+        if area < MIN_CONTOUR_AREA:
+
+            rejected += 1
             continue
 
         x, y, w, h = cv2.boundingRect(contour)
 
-        rectangles.append((x, y, w, h))
+        rectangles.append(
+            (x, y, w, h)
+        )
 
         accepted += 1
+
+    # ----------------------------
+    # Statistics
+    # ----------------------------
 
     if contour_areas:
 
         largest = max(contour_areas)
         smallest = min(contour_areas)
+        average = sum(contour_areas) / len(contour_areas)
 
     else:
 
         largest = 0
         smallest = 0
+        average = 0
 
     stats = {
 
@@ -81,9 +110,19 @@ def detect(image):
 
         "accepted_contours": accepted,
 
+        "rejected_contours": rejected,
+
         "largest_contour": int(largest),
 
-        "smallest_contour": int(smallest)
+        "smallest_contour": int(smallest),
+
+        "average_contour": int(average)
+
     }
 
-    return rectangles, mask, contours, stats
+    return (
+        rectangles,
+        mask,
+        contours,
+        stats
+    )

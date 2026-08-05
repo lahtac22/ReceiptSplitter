@@ -132,7 +132,8 @@ def main():
             image,
             rectangles,
             gaps,
-            timings
+            timings,
+            stats
         )
 
         print("[INFO] Inspection report written.")
