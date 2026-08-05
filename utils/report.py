@@ -18,7 +18,8 @@ def write_report(
     file_name,
     image,
     rectangles,
-    gaps
+    gaps,
+    timings
 ):
 
     report_file = folder / "report.txt"
@@ -56,6 +57,16 @@ def write_report(
         report.write(
             f"Vertical Gaps      : {len(gaps)}\n\n"
         )
+
+        write_section(report, "Performance")
+
+        for stage, seconds in timings.items():
+
+            report.write(
+                f"{stage:<20} {seconds:.3f} s\n"
+            )
+
+        report.write("\n")
 
         write_section(report, "Observations")
 
