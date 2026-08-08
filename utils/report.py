@@ -75,17 +75,70 @@ def write_report(
 
         write_section(report, "Contour Measurements")
 
-        report.write(
-            f"Largest Contour     : {stats['largest_contour']:,} px²\n"
-        )
+        accepted_measurements = []
 
-        report.write(
-            f"Smallest Contour    : {stats['smallest_contour']:,} px²\n"
-        )
+        for measurement in stats["contour_measurements"]:
 
-        report.write(
-            f"Average Contour     : {stats['average_contour']:,} px²\n\n"
-        )
+            if measurement["area"] >= 10000:
+
+                accepted_measurements.append(
+                    measurement
+                )
+
+        for index, measurement in enumerate(
+            accepted_measurements,
+            start=1
+        ):
+
+            report.write(
+                f"Contour {index}\n\n"
+            )
+
+            report.write(
+                f"Area            : "
+                f"{measurement['area']:,.0f} px²\n"
+            )
+
+            report.write(
+                f"Width           : "
+                f"{measurement['width']} px\n"
+            )
+
+            report.write(
+                f"Height          : "
+                f"{measurement['height']} px\n"
+            )
+
+            report.write(
+                f"Bounding Area   : "
+                f"{measurement['bounding_area']:,} px²\n"
+            )
+
+            report.write(
+                f"Aspect Ratio    : "
+                f"{measurement['aspect_ratio']:.3f}\n"
+            )
+
+            report.write(
+                f"Fill Ratio      : "
+                f"{measurement['fill_ratio']:.3f}\n"
+            )
+
+            report.write(
+                f"Perimeter       : "
+                f"{measurement['perimeter']:,.0f} px\n"
+            )
+
+            report.write(
+                f"Rectangularity  : "
+                f"{measurement['rectangularity']:.3f}\n\n"
+            )
+
+        if not accepted_measurements:
+
+            report.write(
+                "No accepted contours to measure.\n\n"
+            )
 
         write_section(report, "Performance")
 

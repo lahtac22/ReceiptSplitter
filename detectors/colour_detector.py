@@ -1,5 +1,7 @@
 import cv2
 
+from utils.geometry import contour_measurements
+
 
 MIN_CONTOUR_AREA = 10000
 
@@ -64,16 +66,24 @@ def detect(image):
 
     contour_areas = []
 
+    contour_measurement_list = []
+
     accepted = 0
     rejected = 0
 
     for contour in contours:
 
-        area = cv2.contourArea(contour)
+        measurements = contour_measurements(contour)
 
-        contour_areas.append(area)
+        contour_areas.append(
+            measurements["area"]
+        )
 
-        if area < MIN_CONTOUR_AREA:
+        contour_measurement_list.append(
+            measurements
+        )
+
+        if measurements["area"] < MIN_CONTOUR_AREA:
 
             rejected += 1
             continue
@@ -116,7 +126,9 @@ def detect(image):
 
         "smallest_contour": int(smallest),
 
-        "average_contour": int(average)
+        "average_contour": int(average),
+
+        "contour_measurements": contour_measurement_list
 
     }
 
