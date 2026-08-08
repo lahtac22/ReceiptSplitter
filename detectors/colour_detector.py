@@ -71,9 +71,22 @@ def detect(image):
     accepted = 0
     rejected = 0
 
+    # Image area used for relative contour size
+    image_area = image.shape[0] * image.shape[1]
+
     for contour in contours:
 
-        measurements = contour_measurements(contour)
+        measurements = contour_measurements(
+            contour
+        )
+
+        # ----------------------------
+        # Relative contour size
+        # ----------------------------
+
+        measurements["area_ratio"] = (
+            measurements["area"] / image_area
+        )
 
         contour_areas.append(
             measurements["area"]
@@ -83,12 +96,22 @@ def detect(image):
             measurements
         )
 
+        # ----------------------------
+        # Minimum contour area
+        # ----------------------------
+
         if measurements["area"] < MIN_CONTOUR_AREA:
 
             rejected += 1
             continue
 
-        x, y, w, h = cv2.boundingRect(contour)
+        # ----------------------------
+        # Bounding rectangle
+        # ----------------------------
+
+        x, y, w, h = cv2.boundingRect(
+            contour
+        )
 
         rectangles.append(
             (x, y, w, h)
@@ -102,9 +125,18 @@ def detect(image):
 
     if contour_areas:
 
-        largest = max(contour_areas)
-        smallest = min(contour_areas)
-        average = sum(contour_areas) / len(contour_areas)
+        largest = max(
+            contour_areas
+        )
+
+        smallest = min(
+            contour_areas
+        )
+
+        average = (
+            sum(contour_areas)
+            / len(contour_areas)
+        )
 
     else:
 
@@ -128,7 +160,8 @@ def detect(image):
 
         "average_contour": int(average),
 
-        "contour_measurements": contour_measurement_list
+        "contour_measurements":
+            contour_measurement_list
 
     }
 
